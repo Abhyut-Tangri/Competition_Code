@@ -1,0 +1,309 @@
+#Collection bins 
+
+BEGIN
+    INITIATE sensor_system
+    INITIATE bin_capacity = 100 // Maximum bin capacity in percentage
+
+    FUNCTION check_bin_status():
+        current_level = sensor_system.get_current_level()
+        RETURN current_level
+
+    FUNCTION detect_plastic_type():
+        plastic_type = sensor_system.scan_plastic()
+        RETURN plastic_type
+
+    FUNCTION send_data_to_server(current_level, plastic_type):
+        server.connect()
+        server.send("Bin Level: " + current_level + "%, Plastic Type: " + plastic_type)
+        server.disconnect()
+
+    WHILE True:
+        current_level = check_bin_status()
+        plastic_type = detect_plastic_type()
+
+        IF current_level > 75:
+            send_data_to_server(current_level, plastic_type)
+            DISPLAY "Bin is almost full. Collection needed."
+        ELSE:
+            send_data_to_server(current_level, plastic_type)
+            DISPLAY "Bin status sent to server."
+
+        WAIT 5 minutes
+    
+        FUNCTION send_alert(message):
+        alert_system.notify_team(message)
+        PRINT message
+    
+    FUNCTION log_maintenance(bin_id, action):
+        maintenance_log.add("Bin ID: " + bin_id + ", Action: " + action + ", Timestamp: " + get_current_time())
+    
+    WHILE True:
+        current_level = check_bin_status()
+        plastic_type = detect_plastic_type()
+    
+        IF current_level > 75:
+            send_data_to_server(current_level, plastic_type)
+            send_alert("Bin is almost full. Collection needed.")
+            log_maintenance("Bin123", "Alert sent")
+        ELSE:
+            send_data_to_server(current_level, plastic_type)
+            log_maintenance("Bin123", "Status sent to server")
+    
+        WAIT 5 minutes
+    
+END
+
+#sort plant
+
+BEGIN
+    INITIATE ai_sorting_system
+    INITIATE conveyor_belt
+
+    FUNCTION scan_and_sort():
+        WHILE conveyor_belt.is_running():
+            plastic_item = conveyor_belt.get_next_item()
+            plastic_type = ai_sorting_system.identify(plastic_item)
+            ai_sorting_system.sort(plastic_item, plastic_type)
+            PRINT "Item sorted: " + plastic_item + " as " + plastic_type
+
+    FUNCTION start_sorting_process():
+        conveyor_belt.start()
+        scan_and_sort()
+
+    FUNCTION stop_sorting_process():
+        conveyor_belt.stop()
+        PRINT "Sorting process stopped."
+
+    start_sorting_process()
+    WAIT until end_of_day
+    stop_sorting_process()
+
+    FUNCTION handle_sorting_error(error_message):
+        PRINT "Error: " + error_message
+        ai_sorting_system.alert_maintenance_team(error_message)
+
+    FUNCTION track_sorting_efficiency():
+        sorted_items = ai_sorting_system.get_sorted_item_count()
+        total_items = conveyor_belt.get_total_item_count()
+        efficiency = (sorted_items / total_items) * 100
+        PRINT "Current sorting efficiency: " + efficiency + "%"
+
+    FUNCTION conduct_maintenance_check():
+        ai_sorting_system.run_diagnostics()
+        conveyor_belt.run_diagnostics()
+        PRINT "Maintenance check complete"
+
+    start_sorting_process()
+    WHILE conveyor_belt.is_running():
+        TRY:
+            scan_and_sort()
+            track_sorting_efficiency()
+        EXCEPT Error as e:
+            handle_sorting_error(e.message)
+
+    IF get_current_time() == "end_of_day":
+        conduct_maintenance_check()
+        stop_sorting_process()
+
+END
+
+
+
+#blockchain trust + shows transparency
+
+BEGIN
+    INITIATE blockchain_system
+    INITIATE recycling_data = []
+
+    FUNCTION record_recycling_data(data):
+        blockchain_system.add_block(data)
+        recycling_data.append(data)
+        PRINT "Data recorded on blockchain: " + data
+
+    FUNCTION track_recycling(user_id):
+        user_data = blockchain_system.get_user_data(user_id)
+        RETURN user_data
+
+    WHILE True:
+        data = receive_recycling_data()
+        record_recycling_data(data)
+
+        WAIT 5 minutes
+    FUNCTION encrypt_data(data):
+        encrypted_data = encryption_system.encrypt(data)
+        RETURN encrypted_data
+    
+    FUNCTION notify_user(user_id, message):
+        user_notification_system.send(user_id, message)
+    
+    FUNCTION provide_recycling_tips():
+        recycling_trends = analyze_data_trends(recycling_data)
+        tips = generate_recycling_tips(recycling_trends)
+        PRINT "Recycling Tips: " + tips
+    
+    WHILE True:
+        data = receive_recycling_data()
+        encrypted_data = encrypt_data(data)
+        record_recycling_data(encrypted_data)
+        notify_user(data.user_id, "Your recycling data has been recorded.")
+        provide_recycling_tips()
+        WAIT 5 minutes
+END
+
+#recyling app game
+BEGIN
+    INITIATE app
+    INITIATE user_profiles = []
+
+    FUNCTION display_recycling_guide():
+        PRINT "Guide on how to recycle various types of plastics."
+
+    FUNCTION show_collection_schedule(user_location):
+        schedule = get_schedule(user_location)
+        PRINT "Upcoming collection days: " + schedule
+
+    FUNCTION track_rewards(user_id):
+        rewards = user_profiles[user_id].rewards
+        PRINT "Current rewards: " + rewards
+
+    FUNCTION log_recycling_activity(user_id, plastic_type, is_correct):
+        IF is_correct:
+            user_profiles.setdefault(user_id, {'recycling_total': 0, 'points': 0})
+            user_profiles[user_id]['recycling_total'] += 1
+            user_profiles[user_id]['points'] += 10
+            PRINT "Recycling activity logged. Points awarded."
+        ELSE:
+            PRINT "Improper recycling detected. Please follow the guidelines."
+            display_awareness_message(plastic_type)
+
+    FUNCTION display_awareness_message(plastic_type):
+        message = get_awareness_message(plastic_type)
+        PRINT message
+
+    FUNCTION get_awareness_message(plastic_type):
+        IF plastic_type == "Incorrect Plastic":
+            RETURN "You have recycled an incorrect plastic item. Please refer to the recycling guide."
+        ELSE IF plastic_type == "Contaminated":
+            RETURN "Your recycled item is contaminated. Please clean items before recycling."
+        ELSE:
+            RETURN "Please follow the recycling guidelines."
+
+    FUNCTION main_menu():
+        PRINT "1. Recycling Guide"
+        PRINT "2. Collection Schedule"
+        PRINT "3. Track Rewards"
+        PRINT "4. Log Recycling Activity"
+        choice = get_user_input()
+
+        IF choice == 1:
+            display_recycling_guide()
+        ELSE IF choice == 2:
+            user_location = get_user_location()
+            show_collection_schedule(user_location)
+        ELSE IF choice == 3:
+            user_id = get_user_id()
+            track_rewards(user_id)
+        ELSE IF choice == 4:
+            user_id = get_user_id()
+            plastic_type = get_plastic_type()
+            is_correct = check_if_correct_recycling(plastic_type)
+            log_recycling_activity(user_id, plastic_type, is_correct)
+        ELSE:
+            PRINT "Invalid choice. Please try again."
+
+    WHILE True:
+        main_menu()
+        WAIT 1 minute
+    
+    FUNCTION display_leaderboard():
+        leaderboard = get_leaderboard()
+        PRINT "Leaderboard: " + leaderboard
+    
+    FUNCTION daily_challenge():
+        challenge = generate_daily_challenge()
+        PRINT "Today's Challenge: " + challenge
+    
+    FUNCTION display_educational_content():
+        content = get_educational_content()
+        PRINT "Educational Content: " + content
+    
+    FUNCTION main_menu():
+        PRINT "1. Recycling Guide"
+        PRINT "2. Collection Schedule"
+        PRINT "3. Track Rewards"
+        PRINT "4. Log Recycling Activity"
+        PRINT "5. View Leaderboard"
+        PRINT "6. Daily Challenge"
+        PRINT "7. Educational Content"
+        choice = get_user_input()
+    
+        IF choice == 1:
+            display_recycling_guide()
+        ELSE IF choice == 2:
+            user_location = get_user_location()
+            show_collection_schedule(user_location)
+        ELSE IF choice == 3:
+            user_id = get_user_id()
+            track_rewards(user_id)
+        ELSE IF choice == 4:
+            user_id = get_user_id()
+            plastic_type = get_plastic_type()
+            is_correct = check_if_correct_recycling(plastic_type)
+            log_recycling_activity(user_id, plastic_type, is_correct)
+        ELSE IF choice == 5:
+            display_leaderboard()
+        ELSE IF choice == 6:
+            daily_challenge()
+        ELSE IF choice == 7:
+            display_educational_content()
+        ELSE:
+            PRINT "Invalid choice. Please try again."
+END
+
+#upcycling hub 
+
+
+BEGIN
+    INITIATE upcycling_hub
+    INITIATE plastic_waste_collection = []
+
+    FUNCTION collect_plastic_waste():
+        plastic_waste = receive_plastic_waste()
+        plastic_waste_collection.add(plastic_waste)
+        PRINT "Plastic waste collected: " + plastic_waste
+
+    FUNCTION conduct_upcycling_workshop():
+        FOR plastic IN plastic_waste_collection:
+            upcycled_product = upcycle(plastic)
+            DISPLAY "Upcycled product: " + upcycled_product
+            STORE upcycled_product
+
+    WHILE True:
+        collect_plastic_waste()
+        conduct_upcycling_workshop()
+
+        WAIT 1 day
+    
+    FUNCTION engage_community():
+        community_event = schedule_community_event()
+        PRINT "Upcoming Community Event: " + community_event
+    
+    FUNCTION showcase_upcycled_products():
+        products = get_upcycled_products()
+        PRINT "Upcycled Products: " + products
+    
+    FUNCTION collect_feedback():
+        feedback = receive_feedback()
+        analyze_feedback(feedback)
+        PRINT "Thank you for your feedback!"
+    
+    WHILE True:
+        collect_plastic_waste()
+        conduct_upcycling_workshop()
+        showcase_upcycled_products()
+        engage_community()
+        collect_feedback()
+        WAIT 1 day
+    
+END
+

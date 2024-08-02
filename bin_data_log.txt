@@ -1,0 +1,13 @@
+Bin Level: 95%, Plastic Type: Plastic
+Bin Level: 61%, Plastic Type: Plastic
+Bin Level: 8%, Plastic Type: Plastic
+Bin Level: 79%, Plastic Type: Plastic
+Bin Level: 74%, Plastic Type: Plastic
+Bin Level: 90%, Plastic Type: Plastic
+Bin Level: 56%, Plastic Type: Plastic
+Bin Level: 91%, Plastic Type: Plastic
+Bin Level: 36%, Plastic Type: Plastic
+Bin Level: 35%, Plastic Type: Plastic
+Bin Level: 49%, Plastic Type: Plastic
+Bin Level: 85%, Plastic Type: Plastic
+Bin Level: 90%, Plastic Type: Plastic

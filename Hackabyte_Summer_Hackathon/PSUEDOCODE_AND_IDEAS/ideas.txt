@@ -1,0 +1,25 @@
+Prompt:
+Theme: Create a project that addresses environmental sustainability.
+
+Identify a Key Environmental Issue
+Develop a Solution
+Promote Sustainability
+
+Idea One: Smart Bin Collector
+
+Main details: uses ai detection to sort different plastics for resuable purposes, as a lot of people still do not put plastics and foods in right bins
+
+
+Idea two: Farm help
+
+Main Details: Use ai to to perform predictions on likely crop yields etc, utilize drones for planting and weed/unwanted plant killing
+
+
+Idea three: Energy conservation
+
+Main details: Uses ai models to learn energy consumption of household and optimizes use of energy, stops or limits when unnesacary, 
+
+
+Final: Idea 1
+
+Extra Details: Use camera inside bin to do for now, create a game system similiar to microsoft rewards that gives pop out awarness messages, and counts points for recycling 

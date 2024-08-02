@@ -1,0 +1,59 @@
+#Collection bins 
+
+BEGIN
+    INITIATE sensor_system
+    INITIATE bin_capacity = 100 // Maximum bin capacity in percentage
+
+    FUNCTION check_bin_status():
+        current_level = sensor_system.get_current_level()
+        RETURN current_level
+
+    FUNCTION detect_plastic_type():
+        plastic_type = sensor_system.scan_plastic()
+        RETURN plastic_type
+
+    FUNCTION send_data_to_server(current_level, plastic_type):
+        server.connect()
+        server.send("Bin Level: " + current_level + "%, Plastic Type: " + plastic_type)
+        server.disconnect()
+
+    WHILE True:
+        current_level = check_bin_status()
+        plastic_type = detect_plastic_type()
+
+        IF current_level > 75:
+            send_data_to_server(current_level, plastic_type)
+            DISPLAY "Bin is almost full. Collection needed."
+        ELSE:
+            send_data_to_server(current_level, plastic_type)
+            DISPLAY "Bin status sent to server."
+
+        WAIT 5 minutes
+    
+        FUNCTION send_alert(message):
+        alert_system.notify_team(message)
+        PRINT message
+    
+    FUNCTION log_maintenance(bin_id, action):
+        maintenance_log.add("Bin ID: " + bin_id + ", Action: " + action + ", Timestamp: " + get_current_time())
+    
+    WHILE True:
+        current_level = check_bin_status()
+        plastic_type = detect_plastic_type()
+    
+        IF current_level > 75:
+            send_data_to_server(current_level, plastic_type)
+            send_alert("Bin is almost full. Collection needed.")
+            log_maintenance("Bin123", "Alert sent")
+        ELSE:
+            send_data_to_server(current_level, plastic_type)
+            log_maintenance("Bin123", "Status sent to server")
+    
+        WAIT 5 minutes
+    
+END
+
+
+
+
+

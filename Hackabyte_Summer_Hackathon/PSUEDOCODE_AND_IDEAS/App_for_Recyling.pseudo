@@ -1,0 +1,109 @@
+#recyling app game
+BEGIN
+    INITIATE app
+    INITIATE user_profiles = []
+
+    FUNCTION display_recycling_guide():
+        PRINT "Guide on how to recycle various types of plastics."
+
+    FUNCTION show_collection_schedule(user_location):
+        schedule = get_schedule(user_location)
+        PRINT "Upcoming collection days: " + schedule
+
+    FUNCTION track_rewards(user_id):
+        rewards = user_profiles[user_id].rewards
+        PRINT "Current rewards: " + rewards
+
+    FUNCTION log_recycling_activity(user_id, plastic_type, is_correct):
+        IF is_correct:
+            user_profiles.setdefault(user_id, {'recycling_total': 0, 'points': 0})
+            user_profiles[user_id]['recycling_total'] += 1
+            user_profiles[user_id]['points'] += 10
+            PRINT "Recycling activity logged. Points awarded."
+        ELSE:
+            PRINT "Improper recycling detected. Please follow the guidelines."
+            display_awareness_message(plastic_type)
+
+    FUNCTION display_awareness_message(plastic_type):
+        message = get_awareness_message(plastic_type)
+        PRINT message
+
+    FUNCTION get_awareness_message(plastic_type):
+        IF plastic_type == "Incorrect Plastic":
+            RETURN "You have recycled an incorrect plastic item. Please refer to the recycling guide."
+        ELSE IF plastic_type == "Contaminated":
+            RETURN "Your recycled item is contaminated. Please clean items before recycling."
+        ELSE:
+            RETURN "Please follow the recycling guidelines."
+
+    FUNCTION main_menu():
+        PRINT "1. Recycling Guide"
+        PRINT "2. Collection Schedule"
+        PRINT "3. Track Rewards"
+        PRINT "4. Log Recycling Activity"
+        choice = get_user_input()
+
+        IF choice == 1:
+            display_recycling_guide()
+        ELSE IF choice == 2:
+            user_location = get_user_location()
+            show_collection_schedule(user_location)
+        ELSE IF choice == 3:
+            user_id = get_user_id()
+            track_rewards(user_id)
+        ELSE IF choice == 4:
+            user_id = get_user_id()
+            plastic_type = get_plastic_type()
+            is_correct = check_if_correct_recycling(plastic_type)
+            log_recycling_activity(user_id, plastic_type, is_correct)
+        ELSE:
+            PRINT "Invalid choice. Please try again."
+
+    WHILE True:
+        main_menu()
+        WAIT 1 minute
+    
+    FUNCTION display_leaderboard():
+        leaderboard = get_leaderboard()
+        PRINT "Leaderboard: " + leaderboard
+    
+    FUNCTION daily_challenge():
+        challenge = generate_daily_challenge()
+        PRINT "Today's Challenge: " + challenge
+    
+    FUNCTION display_educational_content():
+        content = get_educational_content()
+        PRINT "Educational Content: " + content
+    
+    FUNCTION main_menu():
+        PRINT "1. Recycling Guide"
+        PRINT "2. Collection Schedule"
+        PRINT "3. Track Rewards"
+        PRINT "4. Log Recycling Activity"
+        PRINT "5. View Leaderboard"
+        PRINT "6. Daily Challenge"
+        PRINT "7. Educational Content"
+        choice = get_user_input()
+    
+        IF choice == 1:
+            display_recycling_guide()
+        ELSE IF choice == 2:
+            user_location = get_user_location()
+            show_collection_schedule(user_location)
+        ELSE IF choice == 3:
+            user_id = get_user_id()
+            track_rewards(user_id)
+        ELSE IF choice == 4:
+            user_id = get_user_id()
+            plastic_type = get_plastic_type()
+            is_correct = check_if_correct_recycling(plastic_type)
+            log_recycling_activity(user_id, plastic_type, is_correct)
+        ELSE IF choice == 5:
+            display_leaderboard()
+        ELSE IF choice == 6:
+            daily_challenge()
+        ELSE IF choice == 7:
+            display_educational_content()
+        ELSE:
+            PRINT "Invalid choice. Please try again."
+END

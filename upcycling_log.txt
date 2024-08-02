@@ -1,0 +1,6 @@
+Collected: food_container, Upcycled: storage_box
+Collected: plastic_bag, Upcycled: woven_basket
+Collected: food_container, Upcycled: storage_box
+Collected: milk_jug, Upcycled: scoop
+Collected: soda_can, Upcycled: mini_planter
+Collected: soda_can, Upcycled: pen_holder
