@@ -1,4 +1,4 @@
-# HackabytesSummerHackathon
+# SummerHackathon
 
 To run my EcoVision project, ensure you have Python 3.7 installed on your machine. Install the necessary Python libraries by opening a terminal or command prompt and running pip install opencv-python azure-cognitiveservices-vision-customvision msrest.
 
